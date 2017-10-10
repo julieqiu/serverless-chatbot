@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/julieqiu/serverless-chatbot/issues"
   },
-  "homepage": "https://github.com/julieqiu/serverless-chatbot#readme"
+  "homepage": "https://github.com/julieqiu/serverless-chatbot#readme",
+  "dependencies": {
+    "gm": "^1.23.0"
+  }
 }
