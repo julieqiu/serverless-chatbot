@@ -25,6 +25,12 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource:
+        - arn:aws:dynamodb:*:*:table/${self:service}-${self:provider.stage}-teams
+    - Effect: Allow
+      Action:
         - rekognition:DetectFaces
       Resource: '*'
     - Effect: "Allow"
@@ -41,6 +47,17 @@ custom:
   uploadBucket: ${self:service}-${self:provider.stage}-uploads-julieqiu
   transformBucket: ${self:service}-${self:provider.stage}-transformed-julieqiu
 functions:
+  install:
+    handler: install.endpoint
+    events:
+      - http:
+          path: install
+          method: get
+    environment:
+      CLIENT_ID: ''
+      CLIENT_SECRET: ''
+      SLACK_OAUTH: 'https://slack.com/api/oauth.access?'
+      TEAMS_TABLE: ${self:service}-${self:provider.stage}-teams
   hello:
     handler: handler.endpoint
     events:
@@ -55,6 +72,7 @@ functions:
       UPLOAD_BUCKET: ${self:custom.uploadBucket}
       SLACK_HOSTNAME: 'files.slack.com'
       TEMP_FOLDER: '/tmp/'
+      TEAMS_TABLE: ${self:service}-${self:provider.stage}-teams
   faceswap:
     handler: faceswap.execute
     environment:
@@ -78,8 +96,22 @@ functions:
       - s3:
           bucket: ${self:custom.transformBucket}
           event: s3:ObjectCreated:*
-  bot:
-    handler: bot.endpoint
+resources:
+  Resources:
+    TeamsDynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-teams
+        AttributeDefinitions:
+        - AttributeName: team_id
+          AttributeType: S
+        KeySchema:
+        - AttributeName: team_id
+          KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -108,13 +140,3 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
