@@ -11,53 +11,26 @@
 #
 # Happy Coding!
 
-service: serverless-chatbot
-
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
+
+service: serverless-chatbot
 
 provider:
   name: aws
   runtime: nodejs6.10
   profile: serverless-chatbot
-
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
-
+  stage: dev
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+      Resource: arn:aws:s3:::${self:custom.uploadBucket}/*
+custom:
+  uploadBucket: ${self:service}-${self:provider.stage}-uploads-julieqiu
 functions:
-  bot:
-    handler: bot.endpoint
   hello:
     handler: handler.endpoint
     events:
@@ -69,6 +42,18 @@ functions:
       BOT_ACCESS_TOKEN: ''
       BOT_ID: ''
       VERIFICATION_TOKEN: ''
+      UPLOAD_BUCKET: ${self:custom.uploadBucket}
+      SLACK_HOSTNAME: 'files.slack.com'
+      TEMP_FOLDER: '/tmp/'
+  faceswap:
+    handler: faceswap.execute
+    events:
+      - s3:
+          bucket: ${self:custom.uploadBucket}
+          event: s3:ObjectCreated:*
+  bot:
+    handler: bot.endpoint
+
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
