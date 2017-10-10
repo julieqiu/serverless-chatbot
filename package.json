@@ -1,0 +1,19 @@
+{
+  "name": "serverless-chatbot",
+  "version": "1.0.0",
+  "description": "[Instructions](https://www.dropbox.com/sh/xvhjyjnzh4xk4c2/AACzOMZ0sfBiIC59Fbz62lI7a?dl=0)",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julieqiu/serverless-chatbot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/julieqiu/serverless-chatbot/issues"
+  },
+  "homepage": "https://github.com/julieqiu/serverless-chatbot#readme"
+}
