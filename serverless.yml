@@ -68,6 +68,10 @@ functions:
           event: s3:ObjectCreated:*
   slackupdate:
     handler: slackupdate.execute
+    environment:
+      POST_MESSAGE_URL: 'https://slack.com/api/chat.postMessage?'
+      BOT_ACCESS_TOKEN: ''
+      CHANNEL_ID: ''
     events:
       - s3:
           bucket: ${self:custom.transformBucket}
