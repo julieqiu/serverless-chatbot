@@ -72,6 +72,8 @@ functions:
       POST_MESSAGE_URL: 'https://slack.com/api/chat.postMessage?'
       BOT_ACCESS_TOKEN: ''
       CHANNEL_ID: ''
+      SHORTENER_API_KEY: ''
+      SHORTENER_API_URL: 'https://www.googleapis.com/urlshortener/v1/url?'
     events:
       - s3:
           bucket: ${self:custom.transformBucket}
